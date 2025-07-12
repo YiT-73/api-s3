@@ -4,30 +4,30 @@ service: api-s3
 provider:
   name: aws
   runtime: python3.12	
-  # Default memory size for functions (default: 256MB)
   memorySize: 256
   timeout: 30
   iam:
     role: arn:aws:iam::846706155148:role/LabRole
 
-
 functions:
   crear_bucket:
-    handler: handler/crear_bucket.lambda_handler
+    handler: crear_bucket.lambda_handler
     events:
       - http:
           path: /s3/crear-bucket
           method: post
           cors: true
+
   crear_directorio:
-    handler: handler/crear_directorio.lambda_handler
+    handler: crear_directorio.lambda_handler
     events:
       - http:
           path: /s3/crear-directorio
           method: post
           cors: true
+
   subir_archivo:
-    handler: handler/subir_archivo.lambda_handler
+    handler: subir_archivo.lambda_handler
     events:
       - http:
           path: /s3/subir-archivo
