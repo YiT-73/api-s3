@@ -1,20 +1,26 @@
 import boto3
 import json
+import os
 
 def lambda_handler(event, context):
     try:
-        # Parsear correctamente el JSON desde el body
-        body = json.loads(event['body'])  # <--- esto es crítico
-        nombre_bucket = body['bucket']
+        body = json.loads(event['body'])
+        bucket_name = body['bucket']
+        region = os.environ.get('AWS_REGION', 'us-east-1')
 
-        s3 = boto3.client('s3')
-        s3.create_bucket(Bucket=nombre_bucket)
+        s3 = boto3.client('s3', region_name=region)
+
+        if region == 'us-east-1':
+            s3.create_bucket(Bucket=bucket_name)
+        else:
+            s3.create_bucket(
+                Bucket=bucket_name,
+                CreateBucketConfiguration={'LocationConstraint': region}
+            )
 
         return {
             'statusCode': 200,
-            'body': json.dumps({
-                'mensaje': f'Bucket {nombre_bucket} creado exitosamente.'
-            })
+            'body': json.dumps({'mensaje': f'Bucket {bucket_name} creado exitosamente en {region}.'})
         }
     except Exception as e:
         return {
